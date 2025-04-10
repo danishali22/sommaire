@@ -11,11 +11,10 @@ export default function Home() {
       <BgGradient />
       <div className="flex flex-col">
         <HeroSection />
+        <DemoSection />
+        <HowItWorks />
       </div>
 
-      <DemoSection />
-
-      {/* <HowItWorks /> */}
 
       {/* <PricingSection /> */}
 
