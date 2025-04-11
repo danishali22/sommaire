@@ -1,29 +1,30 @@
-import { BrainCircuit, FileOutput, FileText } from "lucide-react";
+import { BrainCircuit, FileOutput, FileText, MoveRight } from "lucide-react";
 import React, { ReactNode } from "react";
 
 type Step = {
   icon: ReactNode;
   label: string;
   description: string;
-}
+};
 
 const steps: Step[] = [
   {
     icon: <FileText size={64} strokeWidth={1.5} />,
     label: "Upload you PDF",
-    description: "Simply drag and drop your document or click to upload"
+    description: "Simply drag and drop your document or click to upload",
   },
   {
     icon: <BrainCircuit size={64} strokeWidth={1.5} />,
     label: "AI Analysis",
-    description: "Our advanced AI processes and analyzes your document instantly",
+    description:
+      "Our advanced AI processes and analyzes your document instantly",
   },
   {
     icon: <FileOutput size={64} strokeWidth={1.5} />,
     label: "Get Summary",
     description: "Receive a clear, concise summary of your document",
   },
-]
+];
 
 const HowItWorks = () => {
   return (
@@ -52,7 +53,18 @@ const HowItWorks = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto relative">
           {steps.map((step, index) => (
-            <StepItem key={index} {...step} />
+            <div key={index} className="relative flex items-stretch">
+              <StepItem {...step} />
+              {index < steps.length - 1 && (
+                <div className="hidden md:block absolute top-1/2 -right-4 transform translate-4-1/2 z-10">
+                  <MoveRight
+                    size={32}
+                    strokeWidth={1}
+                    className="text-rose-400"
+                  />
+                </div>
+              )}
+            </div>
           ))}
         </div>
       </div>
@@ -62,7 +74,7 @@ const HowItWorks = () => {
 
 export default HowItWorks;
 
-function StepItem({icon, label, description} : Step) {
+function StepItem({ icon, label, description }: Step) {
   return (
     <div className="relative p-6 rounded-2xl bg-white/5 backdrop-blur-xs border border-white/10 hover:border-rose-500/50 transition-colors group w-full">
       <div className="flex flex-col gap-4 h-full">

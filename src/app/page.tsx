@@ -13,12 +13,9 @@ export default function Home() {
         <HeroSection />
         <DemoSection />
         <HowItWorks />
+        <PricingSection />
+        {/* <CTASection /> */}
       </div>
-
-
-      {/* <PricingSection /> */}
-
-      {/* <CTASection /> */}
     </div>
   );
 }
