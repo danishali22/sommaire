@@ -49,6 +49,14 @@ export async function generatePdfSummary(uploadResponse: {
                 data: null,
             } 
         }
+
+        return {
+            success: true,
+            message: 'Summary generated successfully',
+            data: {
+                summary,
+            },
+        }
     } catch (error) {
         return {
             success: false,

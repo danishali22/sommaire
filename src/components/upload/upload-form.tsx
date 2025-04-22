@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { forwardRef, useRef, useState } from "react";
 import UploadFormInput from "./upload-form-input";
 import { z } from "zod";
 import { useUploadThing } from "@/utils/uploadthing";
@@ -17,6 +17,7 @@ const schema = z.object({
 
 export default function UploadForm() {
   const formRef = useRef<HTMLFormElement>(null);
+  const [loading, setLoading] = useState(false);
   const { startUpload, routeConfig } = useUploadThing("pdfUploader", {
     onClientUploadComplete: () => {
       console.log("✅ Uploaded successfully!");
@@ -41,61 +42,76 @@ export default function UploadForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const file = formData.get("file") as File;
 
-    // validating the fields
-    const result = schema.safeParse({ file });
-    if (!result.success) {
-      return toast.error("⚠️ Invalid file", {
-        description: result.error.flatten().fieldErrors.file?.[0],
+    try {
+      setLoading(true);
+      console.log("load");
+      // return;
+      const formData = new FormData(e.currentTarget);
+      const file = formData.get("file") as File;
+
+      // validating the fields
+      const validatedSchema = schema.safeParse({ file });
+      if (!validatedSchema.success) {
+        toast.error("⚠️ Invalid file", {
+          description: validatedSchema.error.flatten().fieldErrors.file?.[0],
+        });
+        setLoading(false);
+        return;
+      }
+
+      toast.loading("🚀 Uploading PDF…", {
+        description: "Please wait while we upload your document.",
+        duration: 3000,
       });
-    }
 
-    toast.loading("🚀 Uploading PDF…", {
-      description: "Please wait while we upload your document.",
-      duration: 3000,
-    });
+      // upload the file to upload thing
+      const response = await startUpload([file!]);
+      if (!response) return;
 
-    // upload the file to upload thing
-    const response = await startUpload([file!]);
-    if (!response) return;
+      toast.success("✅ Upload succeeded!", {
+        description: "Your file is safely stored—building your AI summary now…",
+        duration: 2000,
+      });
 
-    toast.success("✅ Upload succeeded!", {
-      description: "Your file is safely stored—building your AI summary now…",
-      duration: 2000,
-    });
+      toast.loading("📝 Processing PDF…", {
+        description: "Our AI is analyzing your document.",
+        duration: 4000,
+      });
 
-    toast.loading("📝 Processing PDF…", {
-      description: "Our AI is analyzing your document.",
-      duration: 4000,
-    });
+      // parse the pdf using lang chain
+      const result = await generatePdfSummary(response);
+      const { data = null, message = null } = result || {};
 
-    // parse the pdf using lang chain
-    const result = await generatePdfSummary(response);
-    const {data=null, message=null} = result || {};
-
-    if(data) {
-      toast.success("🎉 Summary ready!", {
-        description: "Tap below to view your AI‑generated overview.",
-        // action: {
+      if (data) {
+        toast.success("🎉 Summary ready!", {
+          description: "Tap below to view your AI‑generated overview.",
+          // action: {
           //   label: "View Summary",
           //   onClick: () => router.push(`/summaries/${summary.id}`),
           // },
         });
-        // if(data.summary){
-        //   save the summary to database
-        // }
+        formRef.current?.reset();
+        if(data.summary){
+          // save the summary to database
+        }
       }
 
-    // summarize the pdf using AI
-    // save the summary to the database
-    // redirect to the [id] summary page
+      // summarize the pdf using AI
+      // save the summary to the database
+      // redirect to the [id] summary page
+    } catch (error) {
+      setLoading(false);
+      console.error("Error occured", error);
+      formRef.current?.reset();
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="flex flex-col gap-8 w-full max-w-2xl mx-auto">
-      <UploadFormInput onSubmit={handleSubmit} />
+      <UploadFormInput loading={loading} ref={formRef} onSubmit={handleSubmit} />
     </div>
   );
 }
