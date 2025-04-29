@@ -5,7 +5,7 @@ import UploadFormInput from "./upload-form-input";
 import { z } from "zod";
 import { useUploadThing } from "@/utils/uploadthing";
 import { toast } from "sonner";
-import { generatePdfSummary } from "../../../actions/upload-actions";
+import { generatePdfSummary, storePdfSummaryActions } from "../../../actions/upload-actions";
 import { useRouter } from "next/navigation";
 
 const schema = z.object({
@@ -84,6 +84,7 @@ export default function UploadForm() {
       const { data = null, message = null } = result || {};
 
       if (data) {
+        let storeResult: any;
         toast.success("🎉 Summary ready!", {
           description: "Tap below to view your AI‑generated overview.",
           // action: {
@@ -94,6 +95,18 @@ export default function UploadForm() {
         formRef.current?.reset();
         if(data.summary){
           // save the summary to database
+          storeResult = await storePdfSummaryActions({
+            summary: data.summary,
+            fileUrl: response[0].serverData.file.url,
+            title: data.title,
+            fileName: file.name,
+          });
+
+          toast.success("🎉 Summary Generated!", {
+            description: "Your PDF has been successfully summarized and saved.",
+          });
+
+          formRef.current?.reset();
         }
       }
 
