@@ -32,8 +32,12 @@ export default function UploadForm() {
           (err.data as any)?.cause || err.message || "Please try again.",
       });
     },
-    onUploadBegin: ({ file }) => {
-      console.log("🚀 Upload has begun for", file.name);
+    onBeforeUploadBegin: (files) => {
+      console.log("Preparing to upload:", files[0].name);
+      return files;
+    },
+    onUploadBegin: (fileName) => {
+      console.log("Uploading:", fileName);
       toast.loading("🚀 Uploading PDF…", {
         description: "Please wait while we upload your document.",
       });
@@ -67,6 +71,7 @@ export default function UploadForm() {
 
       // upload the file to upload thing
       const response = await startUpload([file!]);
+      console.log("response", response);
       if (!response) return;
 
       toast.success("✅ Upload succeeded!", {
@@ -81,26 +86,23 @@ export default function UploadForm() {
 
       // parse the pdf using lang chain
       const result = await generatePdfSummary(response);
+      console.log("generatePdfSummary result", result);
       const { data = null, message = null } = result || {};
 
       if (data) {
         let storeResult: any;
         toast.success("🎉 Summary ready!", {
           description: "Tap below to view your AI‑generated overview.",
-          // action: {
-          //   label: "View Summary",
-          //   onClick: () => router.push(`/summaries/${summary.id}`),
-          // },
         });
         formRef.current?.reset();
         if(data.summary){
-          // save the summary to database
           storeResult = await storePdfSummaryActions({
             summary: data.summary,
             fileUrl: response[0].serverData.file.url,
             title: data.title,
             fileName: file.name,
           });
+          console.log("storeResult", storeResult);
 
           toast.success("🎉 Summary Generated!", {
             description: "Your PDF has been successfully summarized and saved.",

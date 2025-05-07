@@ -4,27 +4,19 @@ const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
-export async function generateSummaryFromOpenAI(pdfText: string){
+export async function generateSummaryFromOpenAI(pdfText: string) {
     try {
-        const response = await client.responses.create({
-            model: "gpt-4",
-            input: [
-                {
-                    role: "system",
-                    content: SUMMARY_SYSTEM_PROMPT
-                },
-                {
-                    role: "user",
-                    content: `Transform this document into an engaging, easy-to-read summary with contexually relevant emojis and proper markdown formatting:\n\n${pdfText}`,
-                },
+        const completion = await client.chat.completions.create({
+            model: "gpt-4.1",
+            messages: [
+                { role: "system", content: SUMMARY_SYSTEM_PROMPT },
+                { role: "user", content: `Transform this document into an engaging, easy-to-read summary with contexually relevant emojis and proper markdown formatting:\n\n${pdfText}` },
             ],
         });
 
-        console.log(response.output_text);
+        return completion.choices[0].message.content;
     } catch (error: any) {
-        if (error?.status === 429) {
-            throw new Error("RATE_LIMIT_EXCEEDED");
-        }
+        if (error?.status === 429) throw new Error("RATE_LIMIT_EXCEEDED");
         throw error;
     }
 }
