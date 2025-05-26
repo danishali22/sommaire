@@ -17,4 +17,6 @@ export function formatFileName(url: string): string {
 }
 
 // Badge not rendering
+// toast update on entire application
 // dialog render issue
+// delete summary not working

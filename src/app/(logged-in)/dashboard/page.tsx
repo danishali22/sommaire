@@ -57,7 +57,7 @@ const Dashboard = async () => {
               </p>
             </div>
           </div>
-          {summaries.length !== 0 ? (
+          {summaries.length === 0 ? (
             <EmptySummaryState />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 sm:px-0">

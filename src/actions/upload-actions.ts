@@ -14,7 +14,7 @@ interface PdfSummaryType {
     title: string;
     fileName: string;
 }
-// upload-actions.ts
+
 export async function generatePdfSummary(uploadResponse: Array<{
     serverData: {
         userId: string;
@@ -91,7 +91,8 @@ export async function generatePdfSummary(uploadResponse: Array<{
 
 async function savePdfSummary({ userId, fileUrl, summary, title, fileName }: PdfSummaryType) {
     const sql = await getDBConnection();
-    await sql`INSERT INTO pdf_summaries (user_id, original_file_url, summary_text, title, file_name) VALUES (${userId}, ${fileUrl}, ${summary}, ${title}, ${fileName});`;
+    const [savedSummary] = await sql`INSERT INTO pdf_summaries (user_id, original_file_url, summary_text, title, file_name) VALUES (${userId}, ${fileUrl}, ${summary}, ${title}, ${fileName}) RETURNING id, summary_text;`;
+    return savedSummary;
 }
 
 export async function storePdfSummaryActions({ fileUrl, summary, title, fileName }: PdfSummaryType) {
