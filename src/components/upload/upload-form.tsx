@@ -79,11 +79,6 @@ export default function UploadForm() {
         duration: 2000,
       });
 
-      toast.loading("📝 Processing PDF…", {
-        description: "Our AI is analyzing your document.",
-        duration: 4000,
-      });
-
       // parse the pdf using lang chain
       const result = await generatePdfSummary(response);
       console.log("generatePdfSummary result", result);
