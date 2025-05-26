@@ -1,12 +1,14 @@
 "use client";
 
-import React, { forwardRef, useRef, useState } from "react";
-import UploadFormInput from "./upload-form-input";
-import { z } from "zod";
 import { useUploadThing } from "@/utils/uploadthing";
+import React, { useRef, useState } from "react";
 import { toast } from "sonner";
-import { generatePdfSummary, storePdfSummaryActions } from "../../../actions/upload-actions";
-import { useRouter } from "next/navigation";
+import { z } from "zod";
+import {
+  generatePdfSummary,
+  storePdfSummaryActions,
+} from "../../actions/upload-actions";
+import UploadFormInput from "./upload-form-input";
 
 const schema = z.object({
   file: z
@@ -90,7 +92,7 @@ export default function UploadForm() {
           description: "Tap below to view your AI‑generated overview.",
         });
         formRef.current?.reset();
-        if(data.summary){
+        if (data.summary) {
           storeResult = await storePdfSummaryActions({
             summary: data.summary,
             fileUrl: response[0].serverData.file.url,
@@ -121,7 +123,11 @@ export default function UploadForm() {
 
   return (
     <div className="flex flex-col gap-8 w-full max-w-2xl mx-auto">
-      <UploadFormInput loading={loading} ref={formRef} onSubmit={handleSubmit} />
+      <UploadFormInput
+        loading={loading}
+        ref={formRef}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 }

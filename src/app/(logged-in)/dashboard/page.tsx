@@ -7,6 +7,7 @@ import React from "react";
 import { getSummaries } from "@/lib/summaries";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import EmptySummaryState from "@/components/dashboard/summaries/empty-summary-state";
 
 const Dashboard = async () => {
   const user = await currentUser();
@@ -56,11 +57,15 @@ const Dashboard = async () => {
               </p>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 sm:px-0">
-            {summaries.map((summary, index) => (
-              <SummaryCard key={index} summary={summary} />
-            ))}
-          </div>
+          {summaries.length !== 0 ? (
+            <EmptySummaryState />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 sm:px-0">
+              {summaries.map((summary, index) => (
+                <SummaryCard key={index} summary={summary} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </main>
