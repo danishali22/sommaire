@@ -16,16 +16,38 @@ const SummaryPage = async (props: { params: Promise<{ id: string }> }) => {
     notFound();
   }
 
-  const { title, summary_text, file_name, word_count } = summary;
+  const {
+    title,
+    summary_text,
+    file_name,
+    word_count,
+    created_at,
+    original_file_url,
+  } = summary;
+
+  const readingTime = Math.ceil((word_count || 0) / 200);
+
   return (
     <div className="relative isloate min-h-screen bg-linear-to-r from-rose-50/40 to-white">
       <BgGradient className="from-rose-400 via-rose-300 to-orange-200" />
       <div className="conatiner mx-auto flex flex-col gap-4">
         <div className="px-2 sm:px-6 lg:px-8 py-6 sm:py-12 lg:py-12">
           <div className="flex flex-col">
-            <SummaryHeader title={title} />
+            <SummaryHeader
+              title={title}
+              createdAt={created_at}
+              readingTime={readingTime}
+            />
           </div>
-          {file_name && <SourceInfo fileName={file_name} />}
+          {file_name && (
+            <SourceInfo
+              title={title}
+              summaryText={summary_text}
+              fileName={file_name}
+              createdAt={created_at}
+              originalFileUrl={original_file_url}
+            />
+          )}
           <div className="relative mt-4 sm:mt-8 lg:mt-16">
             <div className="relative mt-4 sm:mt-8 lg:mt-16 bg-white/80 backdrop-blur-md rounded-2xl sm:rounded-3xl shadow-xl border border-rose-100/30 transition-all duration-300 hover:shadow-2xl hover:bg-white/90 max-w-4xl mx-auto">
               <div className="absolute inset-0 bg-linear-to-r from-rose-50/50 via-orange-50/30 to-transparent opacity-50 rounded-2xl sm:rounded-3xl" />
