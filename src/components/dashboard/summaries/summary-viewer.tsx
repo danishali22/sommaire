@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import React, { useState } from "react";
 import NavigationControls from "./navigation-controls";
 import { set } from "date-fns";
+import ProgressBar from "./progress-bar";
 
 const parseSection = (section: string) => {
   const [title, ...content] = section.split("\n");
