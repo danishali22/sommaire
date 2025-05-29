@@ -4,7 +4,7 @@ const ProgressBar = ({
   sections,
   currentSection,
 }: {
-  sections: any[];
+  sections: Array<{title: string; points: string[]}>;
   currentSection: number;
 }) => {
   return (
@@ -14,7 +14,7 @@ const ProgressBar = ({
           <div className="h-1.5 flex-1 rounded-full bg-rose-500/10 overflow-hidden">
             <div
               key={index}
-              className={`h-1.5 bg-linear-to-r from-gray-500 to-rose-600 transition-all duration-300 ${
+              className={`h-full bg-linear-to-r from-gray-500 to-rose-600 transition-all duration-300 ${
                 index === currentSection
                   ? "w-full"
                   : currentSection > index

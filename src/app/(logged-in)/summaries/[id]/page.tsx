@@ -1,7 +1,7 @@
 import BgGradient from "@/components/common/bg-gradient";
-import SourceInfo from "@/components/dashboard/summaries/source-info";
-import SummaryViewer from "@/components/dashboard/summaries/summary-viewer";
-import SummaryHeader from "@/components/dashboard/summaries/summary_header";
+import SourceInfo from "@/components/summaries/source-info";
+import SummaryViewer from "@/components/summaries/summary-viewer";
+import SummaryHeader from "@/components/summaries/summary_header";
 import { getSumaryById } from "@/lib/summaries";
 import { FileText } from "lucide-react";
 import { notFound } from "next/navigation";

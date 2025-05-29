@@ -1,13 +1,13 @@
 import BgGradient from "@/components/common/bg-gradient";
 import { Button } from "@/components/ui/button";
-import SummaryCard from "@/components/dashboard/summaries/summary-card";
+import SummaryCard from "@/components/summaries/summary-card";
 import { ArrowRight, Plus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import { getSummaries } from "@/lib/summaries";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import EmptySummaryState from "@/components/dashboard/summaries/empty-summary-state";
+import EmptySummaryState from "@/components/summaries/empty-summary-state";
 
 const Dashboard = async () => {
   const user = await currentUser();
