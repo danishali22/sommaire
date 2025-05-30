@@ -1,17 +1,13 @@
 "use client"
 
-import React, { useState } from "react";
-import { FileText } from "lucide-react";
-import { Button } from "../ui/button";
-import NavLink from "./nav-link";
 import {
-  ClerkProvider,
-  SignInButton,
-  SignUpButton,
   SignedIn,
   SignedOut,
-  UserButton,
+  UserButton
 } from "@clerk/nextjs";
+import { FileText } from "lucide-react";
+import NavLink from "./nav-link";
+import PlanBadge from "./plan-badge";
 
 const Header = () => {
   return (
@@ -34,7 +30,7 @@ const Header = () => {
         <SignedIn>
           <div className="flex gap-2 items-center">
             <NavLink href="/upload">Upload a PDF</NavLink>
-            <div>Pro</div>
+            <PlanBadge />
             <UserButton />
           </div>
         </SignedIn>

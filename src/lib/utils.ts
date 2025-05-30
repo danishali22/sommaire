@@ -20,3 +20,4 @@ export function formatFileName(url: string): string {
 // toast update on entire application
 // dialog render issue
 // delete summary not working
+// after pdl upload redirect to summay/[id] page
