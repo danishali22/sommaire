@@ -1,3 +1,4 @@
+import { User } from "@clerk/nextjs/server";
 import { pricingPlans } from "./constants";
 import { getDBConnection } from "./db"
 import { getUserUploadCount } from "./summaries";
@@ -19,4 +20,15 @@ export const hasReachedUploadLimit = async (userId: string) => {
     const hasReachedLimit = uploadCount >= uploadLimit;
 
     return { hasReachedLimit, uploadLimit };
+}
+
+const hasActivePlan = async (email: string) => {
+    const sql = await getDBConnection();
+    const query = await sql`SELECT price_id, status FROM users WHERE email = ${email} AND status = 'active' AND price_id IS NOT NULL`;
+    return query && query.length > 0;
+}
+
+export const getSubscriptionStatus = async (user: User) => {
+    const hasSubscription = await hasActivePlan(user.emailAddresses[0]?.emailAddress)
+    return hasSubscription;
 }
