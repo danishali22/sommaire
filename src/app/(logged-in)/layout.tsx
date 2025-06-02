@@ -13,7 +13,7 @@ const DashboardLayout = async ({children} : {children: React.ReactNode}) => {
 
     const hasActiveSubscription = await getSubscriptionStatus(user);
 
-    if(hasActiveSubscription){
+    if(!hasActiveSubscription){
         return <UpgradeRequired />
     }
   return (
