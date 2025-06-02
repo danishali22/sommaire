@@ -3,6 +3,9 @@ import { pricingPlans } from "./constants";
 import { getDBConnection } from "./db"
 import { getUserUploadCount } from "./summaries";
 
+const PRO_LIMIT = 1000;
+const BASIC_LIMIT = 5;
+
 export const getPriceIdForActiveUser = async (email: string) => {
     const sql = await getDBConnection();
     const query = await sql`SELECT price_id FROM users WHERE email = ${email} AND status = 'active'`;
@@ -15,8 +18,7 @@ export const hasReachedUploadLimit = async (userId: string) => {
     const priceId = await getPriceIdForActiveUser(userId);
     const isPro = pricingPlans.find((p) => p.priceId === priceId)?.id === 'pro';
 
-    const uploadLimit: number = isPro ? 1000 : 4;
-
+    const uploadLimit: number = isPro ? PRO_LIMIT : BASIC_LIMIT;
     const hasReachedLimit = uploadCount >= uploadLimit;
 
     return { hasReachedLimit, uploadLimit };
