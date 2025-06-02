@@ -23,6 +23,17 @@ const LoadingSummaryPage = () => {
         <div className="px-2 py-4 lg:px-8 mx-auto">
           <div className="flex flex-col gap-8">
             <HeaderSkeleton />
+
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center justify-center gap-2">
+                <Skeleton className="h-4 w-4" />
+                <Skeleton className="w-12 h-6" />
+              </div>
+              <div className="flex gap-2">
+                <Skeleton className="w-12 h-12" />
+              </div>
+            </div>
+
             <div className="relative mt-4 sm:mt-8 lg:mt-16">
               <div className="relative p-8 bg-white/80 backdrop-blur-md rounded-2xl  border border-rose-100/30">
                 {/* Gradient Backgorund  */}
@@ -30,7 +41,7 @@ const LoadingSummaryPage = () => {
 
                 {/* Icon  */}
                 <div className="absolute top-4 right-4 text-rose-300/20">
-                  <FileText className="w-3 h-3 sm:w-4 sm:h-4 text-rose-400" />
+                  <Skeleton className="w-3 h-3 sm:w-4 sm:h-4" />
                 </div>
 
                 <div className="relative">
