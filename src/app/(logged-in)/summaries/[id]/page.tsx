@@ -1,4 +1,5 @@
 import BgGradient from "@/components/common/bg-gradient";
+import { MotionDiv } from "@/components/common/motion-wrapper";
 import SourceInfo from "@/components/summaries/source-info";
 import SummaryViewer from "@/components/summaries/summary-viewer";
 import SummaryHeader from "@/components/summaries/summary_header";
@@ -31,14 +32,19 @@ const SummaryPage = async (props: { params: Promise<{ id: string }> }) => {
     <div className="relative isloate min-h-screen bg-linear-to-r from-rose-50/40 to-white">
       <BgGradient className="from-rose-400 via-rose-300 to-orange-200" />
       <div className="conatiner mx-auto flex flex-col gap-4">
-        <div className="px-2 sm:px-6 lg:px-8 py-6 sm:py-12 lg:py-12">
-          <div className="flex flex-col">
+        <div className="container px-2 py-4 lg:px-8 mx-auto">
+          <MotionDiv
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col"
+          >
             <SummaryHeader
               title={title}
               createdAt={created_at}
               readingTime={readingTime}
             />
-          </div>
+          </MotionDiv>
           {file_name && (
             <SourceInfo
               title={title}
@@ -48,7 +54,12 @@ const SummaryPage = async (props: { params: Promise<{ id: string }> }) => {
               originalFileUrl={original_file_url}
             />
           )}
-          <div className="relative mt-4 sm:mt-8 lg:mt-16">
+          <MotionDiv
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="relative mt-4 sm:mt-8 lg:mt-16"
+          >
             <div className="relative mt-4 sm:mt-8 lg:mt-16 bg-white/80 backdrop-blur-md rounded-2xl sm:rounded-3xl shadow-xl border border-rose-100/30 transition-all duration-300 hover:shadow-2xl hover:bg-white/90 max-w-4xl mx-auto">
               <div className="absolute inset-0 bg-linear-to-r from-rose-50/50 via-orange-50/30 to-transparent opacity-50 rounded-2xl sm:rounded-3xl" />
               <div className="absolute top-2 sm:top-4 right-2 sm:right-4 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground bg-white/90 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full shadow-xs">
@@ -59,7 +70,7 @@ const SummaryPage = async (props: { params: Promise<{ id: string }> }) => {
                 <SummaryViewer summary={summary_text} />
               </div>
             </div>
-          </div>
+          </MotionDiv>
         </div>
       </div>
     </div>
