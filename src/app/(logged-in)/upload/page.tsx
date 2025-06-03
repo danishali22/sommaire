@@ -8,6 +8,8 @@ import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import React from "react";
 
+// export const maxDuration = 20;
+
 const UploadPage = async () => {
   const user = await currentUser();
 

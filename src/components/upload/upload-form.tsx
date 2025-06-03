@@ -6,10 +6,13 @@ import { toast } from "sonner";
 import { z } from "zod";
 import {
   generatePdfSummary,
+  generatePdfText,
   storePdfSummaryActions,
 } from "../../actions/upload-actions";
 import UploadFormInput from "./upload-form-input";
 import LoadingSkeleton from "./loading-skeleton";
+import { formatFileNameAsTitle } from "@/utils/format-utils";
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
   file: z
@@ -20,6 +23,7 @@ const schema = z.object({
 
 export default function UploadForm() {
   const formRef = useRef<HTMLFormElement>(null);
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const { startUpload, routeConfig } = useUploadThing("pdfUploader", {
     onClientUploadComplete: () => {
@@ -41,9 +45,6 @@ export default function UploadForm() {
     },
     onUploadBegin: (fileName) => {
       console.log("Uploading:", fileName);
-      toast.loading("🚀 Uploading PDF…", {
-        description: "Please wait while we upload your document.",
-      });
     },
   });
 
@@ -67,11 +68,6 @@ export default function UploadForm() {
         return;
       }
 
-      toast.loading("🚀 Uploading PDF…", {
-        description: "Please wait while we upload your document.",
-        duration: 3000,
-      });
-
       // upload the file to upload thing
       const response = await startUpload([file!]);
       console.log("response", response);
@@ -82,37 +78,52 @@ export default function UploadForm() {
         duration: 2000,
       });
 
-      // parse the pdf using lang chain
-      const result = await generatePdfSummary(response);
-      console.log("generatePdfSummary result", result);
-      const { data = null, message = null } = result || {};
+      let storeResult: any;
+      toast.success("🎉 Processing PDF!", {
+        description: "Hang tight! Our AI is reading through your document!.",
+      });
+      formRef.current?.reset();
+      const formattedFileName = formatFileNameAsTitle(file.name);
+      const uploadFileUrl = response[0].serverData.file.url;
 
-      if (data) {
-        let storeResult: any;
-        toast.success("🎉 Summary ready!", {
-          description: "Tap below to view your AI‑generated overview.",
+      const result = await generatePdfText({
+        fileUrl: uploadFileUrl,
+      });
+
+      toast.success("🎉 Generating PDF Summary!", {
+        description: "Han tight! Our AI is reading through your document!.",
+      });
+
+      // call ai service
+      //parse the pdf using lang chain
+      const summaryResult = await generatePdfSummary({
+        pdfText: result?.data?.pdfText ?? "",
+      });
+
+      toast.success("🎉 Saving PDF Summary!", {
+        description: "Han tight! Our AI is reading through your document!.",
+      });
+
+      const { data = null } = summaryResult || {};
+
+      if (data?.summary) {
+        storeResult = await storePdfSummaryActions({
+          summary: data.summary,
+          fileUrl: uploadFileUrl,
+          title: formattedFileName,
+          fileName: file.name,
         });
+        console.log("storeResult", storeResult);
+
+        toast.success("🎉 Summary Generated!", {
+          description: "Your PDF has been successfully summarized and saved.",
+        });
+
         formRef.current?.reset();
-        if (data.summary) {
-          storeResult = await storePdfSummaryActions({
-            summary: data.summary,
-            fileUrl: response[0].serverData.file.url,
-            title: data.title,
-            fileName: file.name,
-          });
-          console.log("storeResult", storeResult);
-
-          toast.success("🎉 Summary Generated!", {
-            description: "Your PDF has been successfully summarized and saved.",
-          });
-
-          formRef.current?.reset();
+        if (storeResult?.data?.id) {
+          router.push(`/summaries/${storeResult.data.id}`);
         }
       }
-
-      // summarize the pdf using AI
-      // save the summary to the database
-      // redirect to the [id] summary page
     } catch (error) {
       setLoading(false);
       console.error("Error occured", error);

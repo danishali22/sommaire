@@ -4,7 +4,7 @@ import { getDBConnection } from "./db"
 import { getUserUploadCount } from "./summaries";
 
 const PRO_LIMIT = 1000;
-const BASIC_LIMIT = 5;
+const BASIC_LIMIT = 10;
 
 export const getPriceIdForActiveUser = async (email: string) => {
     const sql = await getDBConnection();

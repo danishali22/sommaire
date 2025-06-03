@@ -15,16 +15,8 @@ interface PdfSummaryType {
     fileName: string;
 }
 
-export async function generatePdfSummary(uploadResponse: Array<{
-    serverData: {
-        userId: string;
-        file: {
-            url: string;
-            name: string;
-        }
-    };
-}>) {
-    if (!uploadResponse || uploadResponse.length === 0) {
+export async function generatePdfText({fileUrl} : {fileUrl: string}) {
+    if (!fileUrl) {
         return {
             success: false,
             message: 'File upload failed',
@@ -32,21 +24,43 @@ export async function generatePdfSummary(uploadResponse: Array<{
         }
     }
 
-    const { serverData: { userId, file: { url: pdfUrl, name: fileName } } } = uploadResponse[0];
+    try {
+        const pdfText = await fetchAndExtratPdfText(fileUrl);
+        console.log("Extracted PDF text:", pdfText);
 
-    if (!pdfUrl) {
+        if (!pdfText) {
+            return {
+                success: false,
+                message: 'Failed to fetch and extract PDF text',
+                data: null,
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Pdf text generated successfully',
+            data: { pdfText },
+        };
+    } catch (error) {
+        console.error('Failed to fetch and extract PDF text:', error);
         return {
             success: false,
-            message: 'File pdfUrl upload failed',
+            message: 'Failed to fetch and extract PDF text',
             data: null,
         };
     }
+}
+
+export async function generatePdfSummary({ pdfText }: { pdfText: string }) {
+    if (!pdfText) {
+        return {
+            success: false,
+            message: 'File upload failed',
+            data: null,
+        }
+    }
 
     try {
-        // Extract text from the PDF
-        const pdfText = await fetchAndExtratPdfText(pdfUrl);
-        console.log("Extracted PDF text:", pdfText);
-
         let summary;
         try {
             summary = await generateSummaryFromOpenAI(pdfText);
@@ -72,12 +86,10 @@ export async function generatePdfSummary(uploadResponse: Array<{
             };
         }
 
-        const title = formatFileNameAsTitle(fileName);
-
         return {
             success: true,
             message: 'Summary generated successfully',
-            data: { title, summary },
+            data: { summary },
         };
     } catch (error) {
         console.error('Error in generatePdfSummary:', error);
@@ -102,12 +114,12 @@ export async function storePdfSummaryActions({ fileUrl, summary, title, fileName
             return { success: false, message: 'User not found', data: null };
         }
 
-        await savePdfSummary({ userId, fileUrl, summary, title, fileName });
+        const saved = await savePdfSummary({ userId, fileUrl, summary, title, fileName });
 
         return {
             success: true,
             message: 'PDF summary stored successfully',
-            data: null,
+            data: { id: saved.id },
         };
     } catch (error: any) {
         console.error('Failed to store summary:', error);
