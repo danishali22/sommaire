@@ -13,7 +13,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { deleteSummaryAction } from "@/actions/summary-actions";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 interface DeleteButtonProps {
   summaryId: string;
@@ -27,9 +27,12 @@ const DeleteButton = ({ summaryId }: DeleteButtonProps) => {
     startTransition(async() => {
       const result = await deleteSummaryAction(summaryId);
       if (!result.success) {
-        toast.error("Error deleting summary", {
-          description: result.error || "Failed to delete summary.",
-        });
+        toast.error(
+          `❌ Error deleting summary\n${
+            result.error || "Failed to delete summary."
+          }`
+        );
+
       }
       setOpen(false);
     });

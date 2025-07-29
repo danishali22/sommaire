@@ -7,13 +7,6 @@ import { itemsVariants } from '@/lib/constants';
 const UploadHeader = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-6 text-center">
-      <Badge variant={"default"}>Badge</Badge>
-      <div className="bg-red-500 text-white p-4 rounded">Test Tailwind</div>
-      <p className="text-[hsl(var(--primary))]">Should be primary color</p>
-      <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-primary text-primary-foreground">
-        Test Badge Direct
-      </div>
-
       <MotionDiv
         variants={itemsVariants}
         className="relative p-[1px] overflow-hidden rounded-full bg-linear-to-r from-rose-200 via-rose-500 to-rose-800 animate-gradient-x group"

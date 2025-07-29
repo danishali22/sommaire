@@ -22,4 +22,5 @@ export function formatFileName(url: string): string {
 // delete summary not working
 // loading screen when upload pdf
 // style summary/[id] page
-// no errors on console
+// dashboard sekeleton
+// there should be no errors on console

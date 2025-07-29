@@ -4,7 +4,7 @@ import "./globals.css";
 import Header from "@/components/common/header";
 import Footer from "@/components/common/footer";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "react-hot-toast";
 
 const fontSans = FontSans({
   variable: "--font-sans",
@@ -32,7 +32,31 @@ export default function RootLayout({
             <main className="flex-1">{children}</main>
             <Footer />
           </div>
-          <Toaster />
+          <Toaster
+            position="bottom-right"
+            reverseOrder={false}
+            toastOptions={{
+              style: {
+                background: "#1f2937",
+                color: "#f9fafb",
+                fontSize: "14px",
+                borderRadius: "8px",
+                padding: "12px 16px",
+              },
+              success: {
+                iconTheme: {
+                  primary: "#a78bfa",
+                  secondary: "#f9fafb",
+                },
+              },
+              error: {
+                iconTheme: {
+                  primary: "#f87171",
+                  secondary: "#f9fafb",
+                },
+              },
+            }}
+          />
         </body>
       </html>
     </ClerkProvider>

@@ -35,7 +35,7 @@ const Dashboard = async () => {
       >
         <div className="px-2 py-12 sm:py-24">
           <div className="flex gap-4 mb-8 justify-between items-center">
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-start gap-2">
               <MotionH1
                 variants={itemsVariants}
                 initial="hidden"
