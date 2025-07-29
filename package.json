@@ -16,6 +16,7 @@
     "@neondatabase/serverless": "^1.0.0",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-slot": "^1.2.0",
+    "@tailwindcss/vite": "^4.1.11",
     "@uploadthing/react": "^7.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -33,6 +34,7 @@
     "sonner": "^2.0.3",
     "stripe": "^18.2.0",
     "tailwind-merge": "^3.2.0",
+    "tailwindcss": "^4.1.11",
     "tailwindcss-animate": "^1.0.7",
     "tw-animate-css": "^1.2.5",
     "uploadthing": "^7.6.0",
@@ -47,7 +49,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.2.5",
     "eslint-plugin-tailwindcss": "^3.18.0",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite": "^7.0.6"
   }
 }

@@ -17,10 +17,8 @@ export function formatFileName(url: string): string {
 }
 
 // Badge not rendering
-// toast update on entire application
 // dialog render issue
-// delete summary not working
-// loading screen when upload pdf
+// delete summary not working  -> delete should be on that page not with dialog
 // style summary/[id] page
 // dashboard sekeleton
 // there should be no errors on console
