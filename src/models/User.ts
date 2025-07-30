@@ -1,10 +1,12 @@
 import { Schema, model, models, Document } from 'mongoose';
 
 export interface IUser extends Document {
+    clerkUserId?: string;
     email: string;
     fullName?: string;
     customerId: string;
     priceId: string;
+    app: 'clerk' | 'stripe';
     status: 'active' | 'cancelled' | 'trial' | string;
     createdAt: Date;
     updatedAt: Date;
@@ -12,6 +14,11 @@ export interface IUser extends Document {
 
 const UserSchema = new Schema<IUser>(
     {
+        clerkUserId: {
+            type: String,
+            unique: true,
+            trim: true,
+        },
         email: {
             type: String,
             required: true,
@@ -24,11 +31,16 @@ const UserSchema = new Schema<IUser>(
         },
         customerId: {
             type: String,
-            required: true,
+            trim: true,
         },
         priceId: {
             type: String,
-            required: true,
+            trim: true,
+        },
+        app: {
+            type: String,
+            enum: ['clerk', 'stripe'],
+            default: 'clerk',
         },
         status: {
             type: String,

@@ -19,9 +19,9 @@ export const getPriceIdForActiveUser = async (email: string) => {
 /**
  * Check if user has reached upload limit.
  */
-export const hasReachedUploadLimit = async (userEmail: string) => {
+export const hasReachedUploadLimit = async (clerkUserId: string) => {
     await connectToDatabase();
-    const user = await User.findOne({ email: userEmail }).lean<IUser>();
+    const user = await User.findOne({ clerkUserId }).lean<IUser>();
 
     if (!user) {
         throw new Error("User not found.");

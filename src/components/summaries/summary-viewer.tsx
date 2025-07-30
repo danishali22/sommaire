@@ -19,6 +19,8 @@ const SectionTitle = ({ title }: { title: string }) => (
 const SummaryViewer = ({ summary }: { summary: string }) => {
   const [currentSection, setCurrentSection] = useState(0);
 
+  if (!summary) return null;
+
   const handleNext = () =>
     setCurrentSection((prev) => Math.min(prev + 1, sections.length - 1));
   const handlePrevious = () =>
