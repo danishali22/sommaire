@@ -1,11 +1,13 @@
 import mongoose from 'mongoose';
 
-let isConnected = false; // Prevent multiple connections in development
+let isConnected = false;
 
 export async function connectToDatabase(): Promise<typeof mongoose> {
     if (isConnected) {
         return mongoose;
     }
+
+    console.log("process.env.MONGODB_URI", process.env.MONGODB_URI);
 
     const mongoUri = process.env.MONGODB_URI;
     if (!mongoUri) {

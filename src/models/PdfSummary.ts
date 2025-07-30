@@ -11,7 +11,7 @@ export interface IPdfSummary extends Document {
     updatedAt: Date;
 }
 
-const SummarySchema = new Schema<IPdfSummary>(
+const PdfSummarySchema = new Schema<IPdfSummary>(
     {
         userId: {
             type: Schema.Types.Mixed,
@@ -44,4 +44,4 @@ const SummarySchema = new Schema<IPdfSummary>(
     { timestamps: true }
 );
 
-export const PdfSummary = models.PdfSummary || model<IPdfSummary>('PdfSummary', SummarySchema);
+export const PdfSummary = models?.PdfSummary || model<IPdfSummary>('PdfSummary', PdfSummarySchema);

@@ -6,6 +6,7 @@ import Footer from "@/components/common/footer";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "react-hot-toast";
 import "dotenv/config";
+import { AuthProvider } from "../context/AuthContext";
 
 const fontSans = FontSans({
   variable: "--font-sans",
@@ -26,40 +27,42 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body className={`${fontSans.variable} font-sans antialiased`}>
-          <div className="relative flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
-          <Toaster
-            position="bottom-right"
-            reverseOrder={false}
-            toastOptions={{
-              style: {
-                background: "#1f2937",
-                color: "#f9fafb",
-                fontSize: "14px",
-                borderRadius: "8px",
-                padding: "12px 16px",
-              },
-              success: {
-                iconTheme: {
-                  primary: "#a78bfa",
-                  secondary: "#f9fafb",
+      <AuthProvider>
+        <html lang="en">
+          <body className={`${fontSans.variable} font-sans antialiased`}>
+            <div className="relative flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+            <Toaster
+              position="bottom-right"
+              reverseOrder={false}
+              toastOptions={{
+                style: {
+                  background: "#1f2937",
+                  color: "#f9fafb",
+                  fontSize: "14px",
+                  borderRadius: "8px",
+                  padding: "12px 16px",
                 },
-              },
-              error: {
-                iconTheme: {
-                  primary: "#f87171",
-                  secondary: "#f9fafb",
+                success: {
+                  iconTheme: {
+                    primary: "#a78bfa",
+                    secondary: "#f9fafb",
+                  },
                 },
-              },
-            }}
-          />
-        </body>
-      </html>
+                error: {
+                  iconTheme: {
+                    primary: "#f87171",
+                    secondary: "#f9fafb",
+                  },
+                },
+              }}
+            />
+          </body>
+        </html>
+      </AuthProvider>
     </ClerkProvider>
   );
 }

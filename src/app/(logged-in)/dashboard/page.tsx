@@ -1,26 +1,26 @@
+
+"use client"
+
 import BgGradient from "@/components/common/bg-gradient";
 import {
   MotionDiv,
   MotionH1,
   MotionP,
 } from "@/components/common/motion-wrapper";
+import { useAuth } from "@/context/AuthContext";
 import EmptySummaryState from "@/components/summaries/empty-summary-state";
 import SummaryCard from "@/components/summaries/summary-card";
 import { Button } from "@/components/ui/button";
 import { itemsVariants } from "@/lib/constants";
 import { getSummaries } from "@/lib/summaries";
 import { hasReachedUploadLimit } from "@/lib/user";
-import { currentUser } from "@clerk/nextjs/server";
 import { ArrowRight, Plus } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 const Dashboard = async () => {
-  const user = await currentUser();
-  const userId = user?.id;
-  if (!userId) {
-    return redirect("/sign-in");
-  }
+  const { user } = useAuth();
+  const userId = String(user?._id);
+  
   const { hasReachedLimit } = await hasReachedUploadLimit(userId);
   const summaries = await getSummaries(userId);
 

@@ -3,10 +3,10 @@ import { Types } from "mongoose";
 import { connectToDatabase } from "@/lib/db";
 
 // Get all summaries for a user
-export async function getSummaries(userId: string) {
+export async function getSummaries(clerkUserId: string) {
     try {
         await connectToDatabase();
-        const summaries = await PdfSummary.find({ userId: new Types.ObjectId(userId) })
+        const summaries = await PdfSummary.find({ clerkUserId })
             .sort({ createdAt: -1 })
             .lean();
         return summaries;

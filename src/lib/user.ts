@@ -19,17 +19,14 @@ export const getPriceIdForActiveUser = async (email: string) => {
 /**
  * Check if user has reached upload limit.
  */
-export const hasReachedUploadLimit = async (clerkUserId: string) => {
+export const hasReachedUploadLimit = async (userId: string) => {
+    console.log("user id userId", userId);
     await connectToDatabase();
-    const user = await User.findOne({ clerkUserId }).lean<IUser>();
+    const user = await User.findById({ userId }).lean<IUser>();
 
     if (!user) {
         throw new Error("User not found.");
     }
-
-    // Convert ObjectId to string safely
-    const _id = user._id as string | { toString(): string };
-    const userId = typeof _id === "string" ? _id : _id.toString();
 
     // Get user's upload count
     const uploadCount = await getUserUploadCount(userId);

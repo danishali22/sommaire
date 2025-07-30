@@ -5,10 +5,9 @@ import { PdfSummary } from "@/models/PdfSummary";
 import { generateSummaryFromGemini } from "@/lib/gemini";
 import { fetchAndExtratPdfText } from "@/lib/langchain";
 import { generateSummaryFromOpenAI } from "@/lib/openai";
-import { auth } from "@clerk/nextjs/server";
 
 interface PdfSummaryType {
-    userId?: string;
+    userId: string;
     fileUrl: string;
     summary: string;
     title: string;
@@ -106,48 +105,19 @@ export async function generatePdfSummary({ pdfText }: { pdfText: string }) {
     }
 }
 
-async function savePdfSummary({
+export async function storePdfSummaryActions({
     userId,
     fileUrl,
     summary,
     title,
     fileName,
 }: PdfSummaryType) {
-    await connectToDatabase();
-
-    const savedSummary = await PdfSummary.create({
-        userId,
-        originalFileUrl: fileUrl,
-        summary,
-        title,
-        fileName,
-    });
-
-    return {
-        id: savedSummary._id,
-        summary_text: savedSummary.summary,
-    };
-}
-
-export async function storePdfSummaryActions({
-    fileUrl,
-    summary,
-    title,
-    fileName,
-}: PdfSummaryType) {
     try {
-        const { userId } = await auth();
-        if (!userId) {
-            return {
-                success: false,
-                message: "User not found",
-                data: null,
-            };
-        }
+        await connectToDatabase();
 
-        const saved = await savePdfSummary({
+        const savedSummary = await PdfSummary.create({
             userId,
-            fileUrl,
+            originalFileUrl: fileUrl,
             summary,
             title,
             fileName,
@@ -156,7 +126,7 @@ export async function storePdfSummaryActions({
         return {
             success: true,
             message: "PDF summary stored successfully",
-            data: { id: saved.id },
+            data: { id: savedSummary.id },
         };
     } catch (error: any) {
         console.error("Failed to store summary:", error);

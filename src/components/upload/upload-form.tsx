@@ -4,6 +4,7 @@ import { useUploadThing } from "@/utils/uploadthing";
 import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { z } from "zod";
+import { useAuth } from "@/context/AuthContext";
 import {
   generatePdfSummary,
   generatePdfText,
@@ -22,6 +23,7 @@ const schema = z.object({
 });
 
 export default function UploadForm() {
+  const { user } = useAuth();
   const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -104,6 +106,7 @@ export default function UploadForm() {
       if (data?.summary) {
         const storeResult = await toast.promise(
           storePdfSummaryActions({
+            userId: String(user?._id),
             summary: data.summary,
             fileUrl: uploadFileUrl,
             title: formattedFileName,
