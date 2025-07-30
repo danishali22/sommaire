@@ -62,17 +62,17 @@ const SummaryCard = ({ summary }: { summary: any }) => {
         <div className="absolute top-2 right-2">
           <DeleButton summaryId={summary.id} />
         </div>
-        <Link href={`/summaries/${summary.id}`} className="block p-4 sm:p-6">
-          <div className="flex flex-col gap-3 sm:gap-4">
+        <Link href={`/summaries/${summary.id}`} className="block p-4">
+          <div className="flex flex-col gap-3">
             <SumaryHeader
               fileUrl={summary.original_file_url}
               title={summary.title}
               createdAt={summary.created_at}
             />
-            <p className="text-sm text-gray-600 line-clamp-2 sm:text-base pl-2">
+            <p className="text-sm text-gray-600 line-clamp-3 sm:text-base pl-2">
               {summary.summary_text}
             </p>
-            <div className="flex items-center justify-between mt-2 sm:mt-4">
+            <div className="flex items-center justify-between mt-2">
               <span>
                 {" "}
                 <StatusBadge status={summary.status} />

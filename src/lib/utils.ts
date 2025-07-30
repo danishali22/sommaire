@@ -16,9 +16,4 @@ export function formatFileName(url: string): string {
     .join(' ');
 }
 
-// Badge not rendering
-// dialog render issue
-// delete summary not working  -> delete should be on that page not with dialog
-// style summary/[id] page
-// dashboard sekeleton
-// there should be no errors on console
+// lt--port 3000 --subdomain sommaire - ai

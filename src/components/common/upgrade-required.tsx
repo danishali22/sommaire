@@ -21,7 +21,7 @@ const UpgradeRequired = () => {
           feature ❤️
         </p>
         <Button asChild className='bg-linear-to-r from-rose-500 to-rose-700 hover:from-rose-600 hover:to-rose-800 text-white'>
-          <Link href={"/pricing"} className='flex gap-2 items-center'>
+          <Link href={"/#pricing"} className='flex gap-2 items-center'>
             View Pricing Plans <ArrowRight className='h-4 w-4' />
           </Link>
         </Button>

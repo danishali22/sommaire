@@ -11,8 +11,6 @@ interface DeleteButtonProps {
 }
 
 const DeleteButton = ({ summaryId }: DeleteButtonProps) => {
-
-console.log("🔗 DATABASE_URL:", process.env.DATABASE_URL?.slice(0, 40));
   const [isPending, startTransition] = useTransition();
 
   const handleDelete = () => {
