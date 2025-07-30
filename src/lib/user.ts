@@ -1,35 +1,68 @@
-import { User } from "@clerk/nextjs/server";
+import { IUser, User } from "@/models/User";
 import { pricingPlans } from "./constants";
-import { getDBConnection } from "./db"
 import { getUserUploadCount } from "./summaries";
+import { User as ClerkUser } from "@clerk/nextjs/server";
+import { connectToDatabase } from "@/lib/db";
 
 const PRO_LIMIT = 1000;
 const BASIC_LIMIT = 3;
-const sql = await getDBConnection();
 
+/**
+ * Get the Stripe Price ID for an active user by email.
+ */
 export const getPriceIdForActiveUser = async (email: string) => {
-    const query = await sql`SELECT price_id FROM users WHERE email = ${email} AND status = 'active'`;
-    return query[0]?.price_id || null;
-}
+    await connectToDatabase();
+    const user = await User.findOne({ email, status: "active" }).lean<IUser>();
+    return user?.priceId || null;
+};
 
-export const hasReachedUploadLimit = async (userId: string) => {
+/**
+ * Check if user has reached upload limit.
+ */
+export const hasReachedUploadLimit = async (userEmail: string) => {
+    await connectToDatabase();
+    const user = await User.findOne({ email: userEmail }).lean<IUser>();
+
+    if (!user) {
+        throw new Error("User not found.");
+    }
+
+    // Convert ObjectId to string safely
+    const _id = user._id as string | { toString(): string };
+    const userId = typeof _id === "string" ? _id : _id.toString();
+
+    // Get user's upload count
     const uploadCount = await getUserUploadCount(userId);
 
-    const priceId = await getPriceIdForActiveUser(userId);
-    const isPro = pricingPlans.find((p) => p.priceId === priceId)?.id === 'pro';
+    // Check if user is on a Pro plan
+    const isPro = pricingPlans.find((plan) => plan.priceId === user.priceId)?.id === "pro";
 
-    const uploadLimit: number = isPro ? PRO_LIMIT : BASIC_LIMIT;
+    const uploadLimit = isPro ? PRO_LIMIT : BASIC_LIMIT;
     const hasReachedLimit = uploadCount >= uploadLimit;
 
     return { hasReachedLimit, uploadLimit };
-}
+};
 
+/**
+ * Determine if the user has an active subscription.
+ */
 const hasActivePlan = async (email: string) => {
-    const query = await sql`SELECT price_id, status FROM users WHERE email = ${email} AND status = 'active' AND price_id IS NOT NULL`;
-    return query && query.length > 0;
-}
+    await connectToDatabase();
+    const user = await User.findOne({
+        email,
+        status: "active",
+        priceId: { $exists: true, $ne: "" },
+    }).lean();
 
-export const getSubscriptionStatus = async (user: User) => {
-    const hasSubscription = await hasActivePlan(user.emailAddresses[0]?.emailAddress)
-    return hasSubscription;
-}
+    return !!user;
+};
+
+/**
+ * Get subscription status from Clerk user.
+ */
+export const getSubscriptionStatus = async (clerkUser: ClerkUser) => {
+    const email = clerkUser.emailAddresses[0]?.emailAddress;
+    if (!email) return false;
+
+    return await hasActivePlan(email);
+};

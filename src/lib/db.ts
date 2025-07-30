@@ -1,19 +1,27 @@
-import { neon } from "@neondatabase/serverless";
-import fetch, { Request, Response, Headers } from "node-fetch";
+import mongoose from 'mongoose';
 
-export const runtime = "nodejs";
+let isConnected = false; // Prevent multiple connections in development
 
-if (!globalThis.fetch) {
-    globalThis.fetch = fetch as unknown as typeof globalThis.fetch;
-    globalThis.Request = Request as unknown as typeof globalThis.Request;
-    globalThis.Response = Response as unknown as typeof globalThis.Response;
-    globalThis.Headers = Headers as unknown as typeof globalThis.Headers;
-}
-
-export async function getDBConnection() {
-    if (!process.env.DATABASE_URL){
-        throw new Error("Neon Database URL is not defined");
+export async function connectToDatabase(): Promise<typeof mongoose> {
+    if (isConnected) {
+        return mongoose;
     }
-    const sql = neon(process.env.DATABASE_URL);
-    return sql;
+
+    const mongoUri = process.env.MONGODB_URI;
+    if (!mongoUri) {
+        throw new Error('MongoDB connection URI is not defined in .env');
+    }
+
+    try {
+        const db = await mongoose.connect(mongoUri, {
+            dbName: process.env.MONGODB_DB || undefined,
+        });
+
+        isConnected = true;
+        console.log('✅ MongoDB connected');
+        return db;
+    } catch (err) {
+        console.error('❌ MongoDB connection error:', err);
+        throw err;
+    }
 }

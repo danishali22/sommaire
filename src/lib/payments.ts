@@ -1,68 +1,135 @@
-import Stripe from "stripe";
-import { getDBConnection } from "./db";
+import Stripe from 'stripe';
+import { connectToDatabase } from '@/lib/db';
+import { User } from '@/models/User';
+import { Payment } from '@/models/Payment';
 
-export const handleCheckoutSessionCompleted = async ({ session, stripe }: { session: Stripe.Checkout.Session, stripe: Stripe }) => {
+export const handleCheckoutSessionCompleted = async ({
+    session,
+    stripe,
+}: {
+    session: Stripe.Checkout.Session;
+    stripe: Stripe;
+}) => {
+    await connectToDatabase();
+
     const customerId = session.customer as string;
     const customer = await stripe.customers.retrieve(customerId);
-    const priceId = session.line_items?.data[0]?.price?.id;
+    const priceId = session.metadata?.price_id ?? session?.line_items?.data?.[0]?.price?.id;
 
     if ('email' in customer && priceId) {
-        const { email, name } = customer;
-
-        const sql = await getDBConnection();
+        const email = customer.email as string;
+        const fullName = (customer.name || '') as string;
 
         await createOrUpdateUser({
-            sql,
-            email: email as string,
-            fullName: name!,
+            email,
+            fullName,
             customerId,
             priceId,
-            status: 'active'
-        })
+            status: 'active',
+        });
 
         await createPayment({
-            sql,
             session,
-            priceId: priceId as string,
-            userEmail: email as string,
-        })
+            priceId,
+            userEmail: email,
+        });
     }
-}
+};
 
-const createOrUpdateUser = async ({ sql, email, fullName, customerId, priceId, status }: { sql: any, email: string, fullName: string, customerId: string, priceId: string, status: string }) => {
+const createOrUpdateUser = async ({
+    email,
+    fullName,
+    customerId,
+    priceId,
+    status,
+}: {
+    email: string;
+    fullName: string;
+    customerId: string;
+    priceId: string;
+    status: string;
+}) => {
     try {
-        const user = await sql`SELECT * FROM users WHERE email = ${email}`;
-        if (user.length === 0) {
-            await sql`INSERT INTO users (email, full_name, customer_id, price_id, status) VALUES (${email}, ${fullName}, ${customerId}, ${priceId}, ${status} )`
-            console.log('Customer added successfully');
+        await connectToDatabase();
+        const existingUser = await User.findOne({ email });
+
+        if (!existingUser) {
+            await User.create({
+                email,
+                fullName,
+                customerId,
+                priceId,
+                status,
+            });
+
+            console.log('✅ Customer created');
+        } else {
+            await User.updateOne(
+                { email },
+                {
+                    $set: {
+                        fullName,
+                        customerId,
+                        priceId,
+                        status,
+                        updatedAt: new Date(),
+                    },
+                }
+            );
+
+            console.log('✅ Existing user updated');
         }
     } catch (error) {
-        console.log('Error creating or updating user', error);
+        console.error('❌ Error creating or updating user', error);
     }
-}
+};
 
-const createPayment = async ({ sql, session, priceId, userEmail }: { sql: any, session: Stripe.Checkout.Session, priceId: string, userEmail: string }) => {
+const createPayment = async ({
+    session,
+    priceId,
+    userEmail,
+}: {
+    session: Stripe.Checkout.Session;
+    priceId: string;
+    userEmail: string;
+}) => {
     try {
+        await connectToDatabase();
         const { amount_total, id, status } = session;
 
-        await sql`INSERT INTO payments (amount, status, stripe_payment_id, price_id, user_email) VALUES (${amount_total}, ${status}, ${id}, ${priceId}, ${userEmail} )`
+        await Payment.create({
+            amount: amount_total,
+            status,
+            stripePaymentId: id,
+            priceId,
+            userEmail,
+        });
 
-        console.log('Payment added successfully');
+        console.log('✅ Payment added successfully');
     } catch (error) {
-        console.log('Error creating payment', error);
+        console.error('❌ Error creating payment', error);
     }
-}
+};
 
-export const handleSubscriptionDeleted = async ({ subscriptionId, stripe }: { subscriptionId: string, stripe: Stripe }) => {
-    console.log("Subscripiotn deleted", subscriptionId);
+export const handleSubscriptionDeleted = async ({
+    subscriptionId,
+    stripe,
+}: {
+    subscriptionId: string;
+    stripe: Stripe;
+}) => {
+    await connectToDatabase();
     try {
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
-        const sql = await getDBConnection();
-        await sql`UPDATE users SET status = 'cancelled' WHERE customer_id = ${subscription.customer}`
-        console.log('Subscription cancelled successfully');
+        await User.updateOne(
+            { customerId: subscription.customer },
+            { $set: { status: 'cancelled' } }
+        );
+
+        console.log('✅ Subscription cancelled successfully');
     } catch (error) {
-        console.log('Error handling subscription deleted', error);
+        console.error('❌ Error handling subscription deletion', error);
         throw error;
     }
-}
+};
