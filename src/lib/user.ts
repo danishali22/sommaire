@@ -1,3 +1,5 @@
+"use server"
+
 import { IUser, User } from "@/models/User";
 import { pricingPlans } from "./constants";
 import { getUserUploadCount } from "./summaries";
@@ -20,9 +22,9 @@ export const getPriceIdForActiveUser = async (email: string) => {
  * Check if user has reached upload limit.
  */
 export const hasReachedUploadLimit = async (userId: string) => {
-    console.log("user id userId", userId);
+    console.log("userId", userId);
     await connectToDatabase();
-    const user = await User.findById({ userId }).lean<IUser>();
+    const user = await User.findById(userId).lean<IUser>();
 
     if (!user) {
         throw new Error("User not found.");

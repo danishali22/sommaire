@@ -7,9 +7,8 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
         return mongoose;
     }
 
-    console.log("process.env.MONGODB_URI", process.env.MONGODB_URI);
-
     const mongoUri = process.env.MONGODB_URI;
+    console.log("mongoUri", mongoUri);
     if (!mongoUri) {
         throw new Error('MongoDB connection URI is not defined in .env');
     }

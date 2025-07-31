@@ -7,6 +7,7 @@ import { FileText } from "lucide-react";
 import { cn, formatFileName } from "@/lib/utils";
 import { MotionDiv } from "../common/motion-wrapper";
 import { itemsVariants } from "@/lib/constants";
+import { IPdfSummary } from "@/models/PdfSummary";
 
 const SumaryHeader = ({
   fileUrl,
@@ -25,7 +26,7 @@ const SumaryHeader = ({
           {title || formatFileName(fileUrl)}
         </h3>
         <p className="text-sm text-gray-500">
-          {formatDistanceToNow(new Date(createdAt), { addSuffix: true })}
+            {formatDistanceToNow(new Date(createdAt), { addSuffix: true })}
         </p>
       </div>
     </div>
@@ -47,7 +48,7 @@ const StatusBadge = ({ status }: { status: string }) => {
   );
 };
 
-const SummaryCard = ({ summary }: { summary: any }) => {
+const SummaryCard = ({ summary }: { summary: IPdfSummary }) => {
   return (
     <MotionDiv
       variants={itemsVariants}
@@ -60,17 +61,17 @@ const SummaryCard = ({ summary }: { summary: any }) => {
     >
       <Card className="relative h-full">
         <div className="absolute top-2 right-2">
-          <DeleButton summaryId={summary.id} />
+          <DeleButton summaryId={String(summary._id)} />
         </div>
-        <Link href={`/summaries/${summary.id}`} className="block p-4">
+        <Link href={`/summaries/${summary._id}`} className="block p-4">
           <div className="flex flex-col gap-3">
             <SumaryHeader
-              fileUrl={summary.original_file_url}
+              fileUrl={summary.originalFileUrl}
               title={summary.title}
-              createdAt={summary.created_at}
+              createdAt={summary.createdAt instanceof Date ? summary.createdAt.toISOString() : summary.createdAt}
             />
             <p className="text-sm text-gray-600 line-clamp-3 sm:text-base pl-2">
-              {summary.summary_text}
+              {summary.summary}
             </p>
             <div className="flex items-center justify-between mt-2">
               <span>

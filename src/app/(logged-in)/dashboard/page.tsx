@@ -1,6 +1,6 @@
+"use client";
 
-"use client"
-
+import { useEffect, useState } from "react";
 import BgGradient from "@/components/common/bg-gradient";
 import {
   MotionDiv,
@@ -12,17 +12,44 @@ import EmptySummaryState from "@/components/summaries/empty-summary-state";
 import SummaryCard from "@/components/summaries/summary-card";
 import { Button } from "@/components/ui/button";
 import { itemsVariants } from "@/lib/constants";
-import { getSummaries } from "@/lib/summaries";
-import { hasReachedUploadLimit } from "@/lib/user";
 import { ArrowRight, Plus } from "lucide-react";
 import Link from "next/link";
 
-const Dashboard = async () => {
+const Dashboard = () => {
   const { user } = useAuth();
-  const userId = String(user?._id);
-  
-  const { hasReachedLimit } = await hasReachedUploadLimit(userId);
-  const summaries = await getSummaries(userId);
+  const [summaries, setSummaries] = useState([]);
+  const [hasReachedLimit, setHasReachedLimit] = useState(false);
+  const [uploadLimit, setUploadLimit] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user?._id) return;
+
+    const fetchData = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/dashboard/data`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: user._id }),
+            cache: "no-store",
+          }
+        );
+
+        const data = await res.json();
+        setSummaries(data.summaries || []);
+        setHasReachedLimit(data.hasReachedLimit || false);
+        setUploadLimit(data.uploadLimit || 0);
+      } catch (err) {
+        console.error("Failed to load dashboard data", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [user?._id]);
 
   return (
     <main className="min-h-screen">
@@ -50,7 +77,7 @@ const Dashboard = async () => {
                 animate="visible"
                 className="text-gray-600"
               >
-                Transform your PDFs into concise, actionable insights{" "}
+                Transform your PDFs into concise, actionable insights
               </MotionP>
             </div>
             {!hasReachedLimit && (
@@ -72,6 +99,7 @@ const Dashboard = async () => {
               </MotionDiv>
             )}
           </div>
+
           {hasReachedLimit && (
             <MotionDiv
               variants={itemsVariants}
@@ -95,7 +123,10 @@ const Dashboard = async () => {
               </div>
             </MotionDiv>
           )}
-          {summaries.length === 0 ? (
+
+          {loading ? (
+            <p className="text-center text-gray-400">Loading...</p>
+          ) : summaries.length === 0 ? (
             <EmptySummaryState />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 sm:px-0">
