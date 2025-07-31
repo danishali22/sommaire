@@ -1,25 +1,8 @@
-import UpgradeRequired from '@/components/common/upgrade-required';
-import { getSubscriptionStatus } from '@/lib/user';
-import { currentUser } from '@clerk/nextjs/server'
-import { redirect } from 'next/navigation';
-import React from 'react'
+import React from "react";
+import AuthGuard from "@/lib/auth-guard";
 
-const DashboardLayout = async ({children} : {children: React.ReactNode}) => {
-    const user = await currentUser();
+const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
+  <AuthGuard>{children}</AuthGuard>;
+};
 
-    if(!user){
-        redirect('/sign-in');
-    }
-
-    const hasActiveSubscription = await getSubscriptionStatus(user);
-
-    // if(!hasActiveSubscription){
-    if(hasActiveSubscription){
-        return <UpgradeRequired />
-    }
-  return (
-    <div>{children}</div>
-  )
-}
-
-export default DashboardLayout
+export default DashboardLayout;

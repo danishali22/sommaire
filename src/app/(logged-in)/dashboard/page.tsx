@@ -14,15 +14,14 @@ import { Button } from "@/components/ui/button";
 import { itemsVariants } from "@/lib/constants";
 import { ArrowRight, Plus } from "lucide-react";
 import Link from "next/link";
-import SummaryCardSkeleton from "@/skeletons/SummaryCardSkeleton";
 import SummaryCardSkeletonGrid from "@/skeletons/SummaryCardSkeleton";
 
 const Dashboard = () => {
   const { user } = useAuth();
   const [summaries, setSummaries] = useState([]);
-  const [hasReachedLimit, setHasReachedLimit] = useState(false);
-  const [uploadLimit, setUploadLimit] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  console.log("⚡ Dashboard rendered"); 
 
   useEffect(() => {
     if (!user?._id) return;
@@ -31,7 +30,7 @@ const Dashboard = () => {
         setLoading(true);
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/dashboard/data`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/summaries`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -42,8 +41,6 @@ const Dashboard = () => {
 
         const data = await res.json();
         setSummaries(data.summaries || []);
-        setHasReachedLimit(data.hasReachedLimit || false);
-        setUploadLimit(data.uploadLimit || 0);
       } catch (err) {
         console.error("Failed to load dashboard data", err);
       } finally {
@@ -83,7 +80,7 @@ const Dashboard = () => {
                 Transform your PDFs into concise, actionable insights
               </MotionP>
             </div>
-            {!hasReachedLimit && (
+            {user && !user.hasReachedLimit && (
               <MotionDiv
                 variants={itemsVariants}
                 initial="hidden"
@@ -103,7 +100,7 @@ const Dashboard = () => {
             )}
           </div>
 
-          {hasReachedLimit && (
+          {user && user.hasReachedLimit && (
             <MotionDiv
               variants={itemsVariants}
               initial="hidden"
@@ -112,7 +109,8 @@ const Dashboard = () => {
             >
               <div className="bg-rose-50 border border-rose-200 rounded-lg p-4 text-rose-500">
                 <p className="text-sm">
-                  You've reached the limit of 5 uploads on the Basic plan.
+                  You've reached the limit of {user.uploadLimit} uploads on the
+                  Basic plan.
                   <Link
                     href="/pricing"
                     className="text-rose-800 underline font-medium underline-offset-4 inline-flex items-center"

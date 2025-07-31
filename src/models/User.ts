@@ -12,6 +12,15 @@ export interface IUser extends Document {
     updatedAt: Date;
 }
 
+export interface IUserWithPlan extends IUser {
+    plan: 'basic' | 'pro' | null;
+    planName: string;
+    hasActivePlan: boolean;
+    uploadLimit: number;
+    hasReachedLimit: boolean;
+}
+
+
 const UserSchema = new Schema<IUser>(
     {
         clerkUserId: {

@@ -1,11 +1,11 @@
 // app/context/AuthContext.tsx
 "use client";
 
-import { IUser } from "@/models/User";
+import { IUserWithPlan } from "@/models/User";
 import { createContext, useContext, useState, useEffect } from "react";
 
 interface AuthContextType {
-  user: IUser | null;
+  user: IUserWithPlan | null;
   loading: boolean;
   refetch: () => void;
 }
@@ -17,7 +17,7 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<IUser | null>(null);
+  const [user, setUser] = useState<IUserWithPlan | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchUser = async () => {

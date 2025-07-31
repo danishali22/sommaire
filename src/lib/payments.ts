@@ -1,3 +1,5 @@
+"use server"
+
 import Stripe from 'stripe';
 import { connectToDatabase } from '@/lib/db';
 import { User } from '@/models/User';

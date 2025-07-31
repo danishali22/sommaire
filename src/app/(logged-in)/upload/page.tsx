@@ -3,28 +3,8 @@ import { MotionDiv } from "@/components/common/motion-wrapper";
 import UploadForm from "@/components/upload/upload-form";
 import UploadHeader from "@/components/upload/upload-header";
 import { containerVariants } from "@/lib/constants";
-import { hasReachedUploadLimit } from "@/lib/user";
-import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import React from "react";
-
-// export const maxDuration = 20;
 
 const UploadPage = async () => {
-  const user = await currentUser();
-
-  if (!user?.id) {
-    redirect("/sign-in");
-  }
-
-  const userId = user?.id;
-
-  const { hasReachedLimit } = await hasReachedUploadLimit(userId);
-
-  if (hasReachedLimit) {
-    redirect("/dashboard");
-  }
-
   return (
     <section className="min-h-screen">
       <BgGradient />
