@@ -7,6 +7,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "react-hot-toast";
 import "dotenv/config";
 import { AuthProvider } from "../context/AuthContext";
+import { GlobalLoading } from "@/components/global-loading";
 
 const fontSans = FontSans({
   variable: "--font-sans",
@@ -32,7 +33,10 @@ export default function RootLayout({
           <body className={`${fontSans.variable} font-sans antialiased`}>
             <div className="relative flex min-h-screen flex-col">
               <Header />
-              <main className="flex-1">{children}</main>
+              <main className="flex-1">
+                <GlobalLoading />
+                {children}
+              </main>
               <Footer />
             </div>
             <Toaster

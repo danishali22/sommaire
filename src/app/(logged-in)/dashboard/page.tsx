@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import { itemsVariants } from "@/lib/constants";
 import { ArrowRight, Plus } from "lucide-react";
 import Link from "next/link";
+import SummaryCardSkeleton from "@/skeletons/SummaryCardSkeleton";
+import SummaryCardSkeletonGrid from "@/skeletons/SummaryCardSkeleton";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -26,6 +28,7 @@ const Dashboard = () => {
     if (!user?._id) return;
 
     const fetchData = async () => {
+        setLoading(true);
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_BASE_URL}/api/dashboard/data`,
@@ -125,7 +128,7 @@ const Dashboard = () => {
           )}
 
           {loading ? (
-            <p className="text-center text-gray-400">Loading...</p>
+            <SummaryCardSkeletonGrid />
           ) : summaries.length === 0 ? (
             <EmptySummaryState />
           ) : (

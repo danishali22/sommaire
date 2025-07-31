@@ -19,22 +19,22 @@ export async function getSummaries(clerkUserId: string) {
 // Get summary by ID with word count
 export async function getSumaryById(id: string) {
     try {
-        await connectToDatabase();
-        const pdfSummary = await PdfSummary.findById(id).lean() as IPdfSummary | null;
+        const res = await fetch(`/api/summary/${id}`, {
+            method: "GET",// Optional: avoid caching
+        });
 
-        if (!pdfSummary) return null;
+        if (!res.ok) {
+            if (res.status === 404) return null;
+            throw new Error("Failed to fetch summary");
+        }
 
-        const wordCount = pdfSummary.summary?.split(/\s+/).length || 0;
-
-        return {
-            ...pdfSummary,
-            word_count: wordCount,
-        };
+        return await res.json();
     } catch (error) {
-        console.error("Failed to fetch summary:", error);
-        throw error;
+        console.error("❌ Error fetching summary by ID:", error);
+        return null;
     }
 }
+
 
 // Get total uploads for a user
 export const getUserUploadCount = async (userId: string) => {
