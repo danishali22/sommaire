@@ -104,36 +104,3 @@ export async function generatePdfSummary({ pdfText }: { pdfText: string }) {
         };
     }
 }
-
-export async function storePdfSummaryActions({
-    userId,
-    fileUrl,
-    summary,
-    title,
-    fileName,
-}: PdfSummaryType) {
-    try {
-        await connectToDatabase();
-
-        const savedSummary = await PdfSummary.create({
-            userId,
-            originalFileUrl: fileUrl,
-            summary,
-            title,
-            fileName,
-        });
-
-        return {
-            success: true,
-            message: "PDF summary stored successfully",
-            data: { id: savedSummary.id },
-        };
-    } catch (error: any) {
-        console.error("Failed to store summary:", error);
-        return {
-            success: false,
-            message: error.message || "Failed to store summary",
-            data: null,
-        };
-    }
-}

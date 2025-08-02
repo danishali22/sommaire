@@ -105,19 +105,25 @@ export default function UploadForm() {
 
       if (data?.summary) {
         const storeResult = await toast.promise(
-          storePdfSummaryActions({
-            userId: String(user?._id),
-            summary: data.summary,
-            fileUrl: uploadFileUrl,
-            title: formattedFileName,
-            fileName: file.name,
-          }),
+          fetch("/api/summaries", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              summary: data.summary,
+              fileUrl: uploadFileUrl,
+              title: formattedFileName,
+              fileName: file.name,
+            }),
+          }).then((res) => res.json()),
           {
             loading: "💾 Saving summary...",
             success: "✅ Summary saved!",
             error: "❌ Failed to save summary.",
           }
         );
+
 
         if (storeResult?.data?.id) {
           toast.loading("🔄 Redirecting to your summary...");
@@ -135,11 +141,13 @@ export default function UploadForm() {
 
   return (
     <div className="flex flex-col gap-8 w-full max-w-2xl mx-auto mt-2">
-      <div className="flex items-center gap-4">
-        <div className="flex-1 border-t border-gray-300 dark:border-gray-800" />
-        <span className="text-sm text-gray-600">Upload PDF</span>
-        <div className="flex-1 border-t border-gray-300 dark:border-gray-800" />
-      </div>
+      {!loading && (
+        <div className="flex items-center gap-4">
+          <div className="flex-1 border-t border-gray-300 dark:border-gray-800" />
+          <span className="text-sm text-gray-600">Upload PDF</span>
+          <div className="flex-1 border-t border-gray-300 dark:border-gray-800" />
+        </div>
+      )}
 
       <UploadFormInput
         loading={loading}
