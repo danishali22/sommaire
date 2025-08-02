@@ -16,4 +16,6 @@ export function formatFileName(url: string): string {
     .join(' ');
 }
 
-// lt--port 3000 --subdomain sommaire - ai
+// npm
+//  install -g localtunnel
+// lt --port 3000 --subdomain sommaire-ai

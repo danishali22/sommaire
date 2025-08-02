@@ -21,8 +21,6 @@ const Dashboard = () => {
   const [summaries, setSummaries] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  console.log("⚡ Dashboard rendered"); 
-
   useEffect(() => {
     if (!user?._id) return;
 
@@ -112,7 +110,7 @@ const Dashboard = () => {
                   You've reached the limit of {user.uploadLimit} uploads on the
                   Basic plan.
                   <Link
-                    href="/pricing"
+                    href="/#pricing"
                     className="text-rose-800 underline font-medium underline-offset-4 inline-flex items-center"
                   >
                     {" "}

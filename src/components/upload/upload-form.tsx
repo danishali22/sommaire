@@ -8,7 +8,6 @@ import { useAuth } from "@/context/AuthContext";
 import {
   generatePdfSummary,
   generatePdfText,
-  storePdfSummaryActions,
 } from "../../actions/upload-actions";
 import UploadFormInput from "./upload-form-input";
 import LoadingSkeleton from "./loading-skeleton";
@@ -103,14 +102,17 @@ export default function UploadForm() {
 
       const { data = null } = summaryResult || {};
 
+      console.log("outside fetch");
       if (data?.summary) {
+        console.log("before fetch");
         const storeResult = await toast.promise(
-          fetch("/api/summaries", {
+          fetch("/api/pdf-summary", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
+              userId: user?._id,
               summary: data.summary,
               fileUrl: uploadFileUrl,
               title: formattedFileName,
@@ -123,12 +125,13 @@ export default function UploadForm() {
             error: "❌ Failed to save summary.",
           }
         );
-
+        console.log("after fetch");
 
         if (storeResult?.data?.id) {
           toast.loading("🔄 Redirecting to your summary...");
           router.push(`/summaries/${storeResult.data.id}`);
         }
+        console.log("after fetch redirect");
       }
     } catch (error) {
       console.error("Unexpected error:", error);

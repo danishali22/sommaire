@@ -6,7 +6,7 @@ import { pricingPlans } from "@/lib/constants";
 import { PdfSummary } from "@/models/PdfSummary";
 
 const BASIC_LIMIT = 3;
-const PRO_LIMIT = Infinity;
+const PRO_LIMIT = 1000;
 
 export async function GET(req: NextRequest) {
     await connectToDatabase();
@@ -28,7 +28,8 @@ export async function GET(req: NextRequest) {
     const hasActivePlan = !!matchedPlan;
     const uploadLimit = plan === "pro" ? PRO_LIMIT : BASIC_LIMIT;
 
-    const uploadCount = await PdfSummary.countDocuments({ userId: user._id });
+    // const uploadCount = await PdfSummary.countDocuments({ userId: user._id });
+    const uploadCount = 3;
     const hasReachedLimit = uploadCount >= uploadLimit;
 
     return NextResponse.json({
