@@ -7,8 +7,7 @@ import UpgradeRequired from "@/components/common/upgrade-required";
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
 
-  if(user?.hasActivePlan){
-  // if (!user?.hasActivePlan) {
+  if (!user?.hasActivePlan) {
     return <UpgradeRequired />;
   }
 

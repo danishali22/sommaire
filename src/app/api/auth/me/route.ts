@@ -28,8 +28,10 @@ export async function GET(req: NextRequest) {
     const hasActivePlan = !!matchedPlan;
     const uploadLimit = plan === "pro" ? PRO_LIMIT : BASIC_LIMIT;
 
-    // const uploadCount = await PdfSummary.countDocuments({ userId: user._id });
-    const uploadCount = 3;
+    const uploadCount = await PdfSummary.countDocuments({
+        userId: String(user._id),
+    });
+
     const hasReachedLimit = uploadCount >= uploadLimit;
 
     return NextResponse.json({
